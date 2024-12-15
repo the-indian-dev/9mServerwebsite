@@ -176,6 +176,18 @@
       drops.length = Math.floor(canvas.width / fontSize);
       drops.fill(0);
     });
+    function copyToClipboard(text, elementId) {
+          navigator.clipboard.writeText(text).then(() => {
+            // Show confirmation
+            const copiedMessage = document.getElementById(elementId);
+            copiedMessage.style.display = "block";
+
+            // Hide after 2 seconds
+            setTimeout(() => {
+              copiedMessage.style.display = "none";
+            }, 2000);
+          });
+        }
   </script>
 
 </body>
