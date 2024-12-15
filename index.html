@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matrix Server Page</title>
+
+  <!-- Hackery Font: VT323 -->
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+  <style>
+    /* General page styles */
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden; /* Prevent scrollbars */
+      font-family: 'VT323', monospace; /* Hackery font */
+      color: #0F0; /* Matrix green */
+      font-size: 3vh;
+    }
+
+    /* Canvas for the Matrix effect */
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1; /* Place it behind the content */
+    }
+
+    /* Content styles */
+    header, main, footer {
+      text-align: center;
+      margin: 20px;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-top: 20px;
+    }
+
+    a {
+      color: #0F0;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    /* Click-to-Copy styling */
+    .copy {
+      cursor: pointer;
+      display: inline-block;
+      background: #001900;
+      padding: 5px 10px;
+      border: 1px solid #004400;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .copy:hover {
+      background: #003300;
+    }
+
+    /* Copy Confirmation */
+    .copied {
+      color: #00FF00;
+      font-size: 0.9em;
+      display: none;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Matrix Effect Canvas -->
+  <canvas id="matrix"></canvas>
+
+  <!-- Overlay Content -->
+  <header>
+    <h1>Welcome to The Matrix</h1>
+  </header>
+
+  <main>
+    <p>YSFlight server hosted by 9th Matrix Combat Squadron</p>
+    <p>
+      <a href="https://discord.gg/CgEdmBQQMr" target="_blank">
+        Join Our discord server
+      </a>
+    </p>
+    <ul>
+      <li>Version : 20150425</li>
+      <li>Map : Amori</li>
+      <li>Installed Packs : [9th Matrix]</li>
+    </ul>
+    <p>
+      Server IP:
+      <span class="copy" onclick="copyToClipboard('9m.theindiandev.in', 'ipCopied')">
+        9m.theindiandev.in
+      </span>
+      <div id="ipCopied" class="copied">Copied!</div>
+    </p>
+    <p>
+      Port:
+      <span class="copy" onclick="copyToClipboard('7915', 'portCopied')">
+        7915
+      </span>
+      <div id="portCopied" class="copied">Copied!</div>
+    </p>
+  </main>
+
+  <footer>
+    <a href="https://theindiandev.in" target="_blank">https://theindiandev.in</a>
+  </footer>
+
+  <!-- JavaScript for Matrix Effect -->
+  <script>
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+
+    // Set canvas size to the full window size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const fontSize = 18; // Font size for falling numbers
+    const columns = Math.floor(canvas.width / fontSize); // Number of columns
+    const drops = Array(columns).fill(0); // Initialize drop positions for each column
+
+    // Easter egg strings
+    const easterEggs = ["wake up boomer", "R-73", "mig-21"];
+    const easterEggChance = 0.005; // Probability of showing an Easter egg string (low chance)
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; // Transparent background for trailing effect
+      ctx.fillRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+
+      ctx.fillStyle = "#0F0"; // Matrix green color
+      ctx.font = fontSize + "px monospace"; // Font for the numbers
+
+      // Draw characters
+      for (let i = 0; i < drops.length; i++) {
+        // Random chance to draw an Easter egg string
+        if (Math.random() < easterEggChance) {
+          const randomEgg = easterEggs[Math.floor(Math.random() * easterEggs.length)]; // Pick a random string
+          ctx.fillText(randomEgg, i * fontSize, drops[i] * fontSize);
+          drops[i] += randomEgg.length / 2; // Skip lines to fit the text
+        } else {
+          // Draw random katakana character
+          const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        }
+
+        // Reset position when it reaches the bottom
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    // Call drawMatrix every 30ms
+    setInterval(drawMatrix, 30);
+
+    // Update canvas size on window resize
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drops.length = Math.floor(canvas.width / fontSize);
+      drops.fill(0);
+    });
+  </script>
+
+</body>
+</html>
